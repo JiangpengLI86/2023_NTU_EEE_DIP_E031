@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.17)
 
 project(Controller)
 
+# Add the direct_input_wheel_read directory as a subdirectory
+add_subdirectory(external/direct_input_wheel_read)
+
+# Specify the executable and its source files
 add_executable(Controller WIN32
     src/main.cpp
     src/robot.cpp "external/direct_input_wheel_read/include/direct_input_wheel_read.h" "external/direct_input_wheel_read/src/direct_input_wheel_read.cpp")
@@ -32,8 +36,7 @@ endif()
 add_definitions(-D_WIN32_WINNT=0x0601)
 
 target_link_libraries(Controller
-    PRIVATE dxguid
-    PRIVATE dinput8
-    ws2_32)
+    PRIVATE direct_input_wheel_read
+    PRIVATE ws2_32)
 
 target_compile_features(Controller PUBLIC cxx_std_17)
