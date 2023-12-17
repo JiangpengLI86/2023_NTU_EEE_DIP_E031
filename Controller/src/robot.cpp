@@ -3,10 +3,9 @@
 #include <windows.h>
 #include <tchar.h>
 #include <iostream>
-#include <string>
-#include <list>
 #include <cmath>
 #include <dos.h>
+
 #include "robot.h"
 
 using namespace std;
@@ -15,30 +14,16 @@ using namespace std;
 SOCKET clientSocket;
 int current_speed2;
 int cam_angle = 0;
-float Robot::max_speed = 255.0;  
 
 
-Robot::Robot(std::string iname, std::string iaddress)
+Robot::Robot(std::string iname)
 {
 	// Constructor
 	name = iname;
-	_address = iaddress;
 
-	std::cout << "A Robot object called " << name << " with address: " << _address << " is created. \n";
+	std::cout << "A Robot object called " << name << " is created. \n";
 
 	_connect();
-
-}
-
-
-void Robot::step()
-{
-	// Write actuator and then reset this variable
-	_write_actuator();
-	std::list<command> _actuators_to_write;
-
-	// Read sensor
-	//_read_sensor();
 
 }
 
@@ -97,23 +82,14 @@ void Robot::_connect()
 	cout << "Step 4 - Chat to the Server" << endl;
 }
 
-void Robot::_disconnect()
+
+void Robot::disconnect()
 {
 	cout << "Step 5 - Close Socket" << endl;
 
 	WSACleanup();
 }
 
-
-void Robot::_send(command_type type, float variable_1)
-{
-	// sending information via WIFI
-}
-
-void Robot::_send(command_type type, float variable_1, float variable_2)
-{
-	// sending information via WIFI
-}
 
 void Robot::send_int(std::string instruct)
 {
@@ -192,11 +168,9 @@ void Robot::send_cam(std::string instruct)
 
             std::cout << cam_angle << std::endl;
 	}
-	
 
 	char buffer[200];
 	strcpy_s(buffer, tell.c_str());
-
 
 	int byteCount = send(clientSocket, buffer, 200, 0);
 
@@ -223,51 +197,13 @@ void Robot::send_cam(std::string instruct)
 }
 
 
-void Robot::_receive()
-{
-	// receiving information via WIFI
-}
-
-
-void Robot::_write_actuator()
-{
-	// Write actuator
-
-	// Loop through every actuators
-	for (auto com_iter = _actuators_to_write.begin(); com_iter != _actuators_to_write.end(); com_iter++) {
-
-		command_type type = com_iter->type;
-
-		switch (type)
-		{
-		case Motor: {
-			// Drive the motor
-
-			float left_speed = com_iter->value_1;
-			float right_speed = com_iter->value_2;
-			_send(Motor, left_speed, right_speed);
-			break;
-		}
-		case Servo: {
-			// Drive the servo
-		}
-		}
-	}
-}
-
-
-void Robot::_read_sensor()
-{
-	// Read sensor
-
-}
-
 void Robot::stop()
 {
 	std::cout << "Robot " << name << " is stationary. \n";
 	current_speed2 = 0;
 	send_int("p");
 }
+
 
 void Robot::go_forward(int speed) 	// Go forward
 {
@@ -276,12 +212,14 @@ void Robot::go_forward(int speed) 	// Go forward
 	send_int("w");
 }
 
+
 void Robot::go_backward(int speed) 	// Go backward
 {
 	current_speed2 = speed;
 	std::cout << "Robot " << name << " is going backward. \n";
 	send_int("s");
 }
+
 
 void Robot::turn_left(int speed) 	// Turn left
 {
@@ -290,6 +228,7 @@ void Robot::turn_left(int speed) 	// Turn left
 	send_int("a");
 }
 
+
 void Robot::turn_right(int speed) // Turn right
 {
 	current_speed2 = speed;
@@ -297,12 +236,14 @@ void Robot::turn_right(int speed) // Turn right
 	send_int("d");
 }
 
+
 void Robot::cam_turn_left()
 {
 	//Cam turn left
 	std::cout << "Camera is turning left. \n";
 	send_cam("n");
 }
+
 
 void Robot::cam_turn_right()
 {

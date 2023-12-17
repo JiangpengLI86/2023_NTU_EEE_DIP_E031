@@ -1,23 +1,17 @@
-#include <windows.h>
+#include <cmath>     // ceil()
 #include <iostream>  // std::cout
+#include <mutex>
 #include <string>    // std::string
 #include <thread>    // std::thread
-#include <cmath>     // ceil()
-#include <mutex>
+#include <windows.h>
 
-#include "direct_input_wheel_read.h"
+#include "direct_input_wheel_read.h" // DirectInput wheel reading class
 #include "robot.h"  // robot control class
-
-// ------------------------------
-// Define initial parameters
-std::string robot_address = "10:00:E8:D3:AA:C0";
-// ------------------------------
 
 // ------------------------------
 // For steering wheel reading purpose
 char input_command = ' ';
 int current_speed1;
-std::mutex input_command_mutex;
 // ------------------------------
 
 // Entry point.
@@ -37,8 +31,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 
     // ------------------------------
     // Do some initial settings here, like connection, etc.
-    Robot::max_speed = 255;  // Set max speed
-    Robot robot = Robot("robot_1", robot_address);  // Create robot object
+    Robot robot = Robot("robot_1");  // Create robot object
     // ------------------------------
 
     // ------------------------------
@@ -53,9 +46,6 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
         DIJOYSTATE2 input;
         device->GetDeviceState(sizeof(input), &input);
 
-//Comment out below for testing------------------------------------------------------
-
-        input_command_mutex.lock(); //Acquire lock to protect input_command
         // Check if the steering wheel is activated
         if (input.lX != 32767) 
         {
@@ -65,7 +55,6 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
         {
             stop_critera = true;
             robot.stop();
-            input_command_mutex.unlock(); //Release lock of input_command
             break;
         }
         if (input.lY < 65535 && steeringWheelActivated == true) // Throttle is pressed
@@ -114,15 +103,10 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
                 moving = false;
                 robot.stop();
             }
-            input_command_mutex.unlock(); //Release lock of input_command
             continue;
         }    
 
         std::cout << input_command << " is pressed and speed = " << current_speed1 << ". \n";
-
-        input_command_mutex.unlock(); // Release lock of input_command
-
-        robot.step();
 
         // Sleep
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -131,8 +115,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 
     // Conduct some ending code here
     std::cout << "Exit while \n";
-//--------------------------------------------------------------------------------------------------------
-
+    robot.disconnect();
 
     // Print the wheel axis--------------------
     // printf("Wheel: %10d\n", input.lX);
