@@ -14,7 +14,7 @@ project ("2023_NTU_EEE_DIP_E031")
 # Include sub-projects.
 add_subdirectory ("Controller")
 
-# ---------------------- Build the Antenna project (C#) ---------------------- #
+# ---------------------- Prepare to build the Antenna project (C#) ---------------------- #
 # Build the Antenna project (C#) together with the C++ project. Since I cannot find a way to convert
 # the C# project's csproj file to a cmake file, I have to use a custom command to build the C# project.
 
@@ -35,7 +35,7 @@ add_custom_target(
     DEPENDS ${CMAKE_BINARY_DIR}/CSharpBuildFlag
 )
 
-# ---------------------- Build the Antenna project (C#) ---------------------- #
+# ---------------------- Actually build the Antenna project (C#) ---------------------- #
 
 # By adding this line, the compiler will not rebuild the C# project if it is not modified, which will save a lot of time.
-add_dependencies(Controller BuildCSharpProject)
+add_dependencies(Controller BuildCSharpProject) 

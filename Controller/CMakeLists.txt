@@ -6,12 +6,27 @@ project(Controller)
 # Add the direct_input_wheel_read directory as a subdirectory
 add_subdirectory(external/direct_input_wheel_read)
 
+# Find the OpenCV package
+set(OpenCV_DIR "D:/Program Files/opencv/build")
+find_package(OpenCV REQUIRED)
+
+# Add the directory that contains the DLL files
+# link_directories("D:/Program Files (x86)/opencv/build/x64/vc16/bin")
+
 # Specify the executable and its source files
 add_executable(Controller WIN32
     src/main.cpp
-    src/robot.cpp "external/direct_input_wheel_read/include/direct_input_wheel_read.h" "external/direct_input_wheel_read/src/direct_input_wheel_read.cpp")
+    src/robot.cpp
+    src/camera.cpp 
+    external/direct_input_wheel_read/src/direct_input_wheel_read.cpp
+)
 
-target_include_directories(Controller PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(Controller PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/direct_input_wheel_read/include
+    ${OpenCV_INCLUDE_DIRS} # Include the OpenCV include directories
+    ${OpenCV_INCLUDE_DIRS}/x64/vc16/bin
+    )
 
 find_path(WINSOCK_INCLUDE_DIR WinSock2.h)
 find_library(WINSOCK_LIBRARY mswsock)
@@ -37,6 +52,8 @@ add_definitions(-D_WIN32_WINNT=0x0601)
 
 target_link_libraries(Controller
     PRIVATE direct_input_wheel_read
-    PRIVATE ws2_32)
+    PRIVATE ws2_32
+    ${OpenCV_LIBS} # Link the OpenCV libraries
+)
 
 target_compile_features(Controller PUBLIC cxx_std_17)

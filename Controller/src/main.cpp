@@ -7,6 +7,7 @@
 
 #include "direct_input_wheel_read.h" // DirectInput wheel reading class
 #include "robot.h"  // robot control class
+#include "camera.h" // camera display function
 
 // ------------------------------
 // For steering wheel reading purpose
@@ -14,9 +15,15 @@ char input_command = ' ';
 int current_speed1;
 // ------------------------------
 
+// ------------------------------
+// This flag is accessible from both WinMain and cam_main
+std::atomic<bool> stop_cam_thread(false);  // No lock needed here.
+// ------------------------------
+
 // Entry point.
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
+
     SetupConsole();
     auto devices = EnumerateDevices();
 
@@ -26,6 +33,9 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
         system("pause");
         return 0;
     }
+
+    // Add a new thread to display the camera view
+    std::thread cam_thread(cam_main, std::ref(stop_cam_thread));
 
     auto device = devices[0];
 
@@ -117,6 +127,15 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
     std::cout << "Exit while \n";
     robot.disconnect();
 
+    // Set the flag to stop the cam_thread
+    stop_cam_thread = true;
+
+    // Wait for cam_thread to finish before exiting
+    if (cam_thread.joinable())
+    {
+        cam_thread.join();
+    }
+
     // Print the wheel axis--------------------
     // printf("Wheel: %10d\n", input.lX);
     // printf("Throttle: %10d\n", input.lY);
@@ -124,7 +143,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
     // printf("Reverse Gear: %10d\n", input.rgbButtons[23]);
     // }
 
-     
+
     for (auto const& device : devices)
     {
         // Release all acquired devices.
