@@ -7,11 +7,14 @@ project(Controller)
 add_subdirectory(external/direct_input_wheel_read)
 
 # Find the OpenCV package
-set(OpenCV_DIR "D:/Program Files/opencv/build")
+set(JSON_FILE_PATH "../configuration.json")
+file(READ ${JSON_FILE_PATH} CONTENT)
+string(REGEX MATCH "\"opencv_dir\" *: *\"([^\"]*)\"" _ ${CONTENT})
+set(OpenCV_DIR ${CMAKE_MATCH_1})
 find_package(OpenCV REQUIRED)
 
-# Add the directory that contains the DLL files
-# link_directories("D:/Program Files (x86)/opencv/build/x64/vc16/bin")
+# Find the nlohmann_json package
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/nlohmann)
 
 # Specify the executable and its source files
 add_executable(Controller WIN32
@@ -19,6 +22,7 @@ add_executable(Controller WIN32
     src/robot.cpp
     src/camera.cpp 
     external/direct_input_wheel_read/src/direct_input_wheel_read.cpp
+    external/nlohmann/json.hpp
 )
 
 target_include_directories(Controller PRIVATE 
@@ -27,6 +31,7 @@ target_include_directories(Controller PRIVATE
     ${OpenCV_INCLUDE_DIRS} # Include the OpenCV include directories
     ${OpenCV_INCLUDE_DIRS}/x64/vc16/bin
     )
+# ${CMAKE_CURRENT_SOURCE_DIR}/external/nlohmann_json
 
 find_path(WINSOCK_INCLUDE_DIR WinSock2.h)
 find_library(WINSOCK_LIBRARY mswsock)
