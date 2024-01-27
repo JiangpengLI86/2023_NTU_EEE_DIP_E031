@@ -54,6 +54,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.IO.Pipes;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -702,7 +703,7 @@ namespace PGRtls
 
         void WriteTextToFile(string text)
         {
-            string path = "coordinates.txt";  // Specifies the file name and location.
+            string path = "../../out/coordinates.txt";  // Specifies the file name and location.
             string textToAppend = text + Environment.NewLine;  // Appends a new line character to the text.
 
             StringBuilder sb = new StringBuilder();
@@ -719,7 +720,7 @@ namespace PGRtls
 
         void WriteTextToFile(byte[] Frame, int Length, int T_R)
         {
-            string path = "coordinates.txt";
+            string path = "../../out/coordinates.txt";
             Int16 i_len;
             StringBuilder s = new StringBuilder();
 
@@ -743,7 +744,7 @@ namespace PGRtls
 
         void WriteTextToFile(byte[] Frame, int Mode)
         {
-            string path = "coordinates.txt";
+            string path = "../../out/coordinates.txt";
             StringBuilder sb = new StringBuilder();
             string Frame_str = Encoding.UTF8.GetString(Frame);
             Frame_str = Frame_str.Replace("\0", "");
