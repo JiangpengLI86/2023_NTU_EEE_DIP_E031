@@ -78,6 +78,7 @@ If you have any questions, please contact the following members of the team:
 
 - Controller Part:
   - TOK JUN WEI: tokj0002@e.ntu.edu.sg
+  - IBRAHIM BIN MOHAMED FARID: ibrahim003@e.ntu.edu.sg
   - JIANGPENG LI: jiangpen001@e.ntu.edu.sg
 - Arduino Part:
   - TOK JUN WEI: tokj0002@e.ntu.edu.sg
