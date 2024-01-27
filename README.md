@@ -90,3 +90,4 @@ If you have any questions, please contact the following members of the team:
 - Unity Part:
   - AW ZETING: zaw009@e.ntu.edu.sg
   - AGNES ANG JIA HUI: aang036@e.ntu.edu.sg
+  - MEIQI ZHAO: meiqi.zhao@ntu.edu.sg
