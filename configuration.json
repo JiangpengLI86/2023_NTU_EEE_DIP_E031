@@ -1,4 +1,6 @@
 {
   "opencv_dir": "D:/Program Files/opencv/opencv/build",
-  "cam_ip": "192.168.59.246"
+  "cam_ip": "192.168.59.246",
+  "wifi_name": "TP-LINK_2.4GHz_1F",
+  "wifi_password": "12345678"
 }
